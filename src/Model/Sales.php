@@ -4,8 +4,8 @@ require_once __DIR__ . '/../../config/database.php';
 class Sales {
     private $pdo;
 
-    public function __construct() {
-        $this->pdo = connectToDatabase();
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
 
     public function getAllSales() {
@@ -13,13 +13,13 @@ class Sales {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSalesById($id) {
+    public function getSalesById($orderId) {
         $stmt = $this->pdo->prepare("SELECT * FROM sales WHERE order_id = :id");
-        $stmt->execute(['id' => $id]);
+        $stmt->execute(['id' => $orderId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function addSales($data) {
+    public function addSales($salesData) {
         $stmt = $this->pdo->prepare("
             INSERT INTO sales 
             (product_name, product_description, gross_product_price, tax_per_product, quantity_purchased, gross_revenue, total_tax, net_revenue, product_category, sku_number, weight, color, size, rating, stock, sales_rep, address, zipcode, phone, email, loyalty_points, customer_id, country_id) 
@@ -27,10 +27,34 @@ class Sales {
             (:product_name, :product_description, :gross_product_price, :tax_per_product, :quantity_purchased, :gross_revenue, :total_tax, :net_revenue, :product_category, :sku_number, :weight, :color, :size, :rating, :stock, :sales_rep, :address, :zipcode, :phone, :email, :loyalty_points, :customer_id, :country_id)
         ");
 
-        $stmt->execute($data);
+        $stmt->execute([
+            'product_name' => $salesData['product_name'],
+            'product_description' => $salesData['product_description'],
+            'gross_product_price' => $salesData['gross_product_price'],
+            'tax_per_product' => $salesData['tax_per_product'],
+            'quantity_purchased' => $salesData['quantity_purchased'],
+            'gross_revenue' => $salesData['gross_revenue'],
+            'total_tax' => $salesData['total_tax'],
+            'net_revenue' => $salesData['net_revenue'],
+            'product_category' => $salesData['product_category'],
+            'sku_number' => $salesData['sku_number'],
+            'weight' => $salesData['weight'],
+            'color' => $salesData['color'],
+            'size' => $salesData['size'],
+            'rating' => $salesData['rating'],
+            'stock' => $salesData['stock'],
+            'sales_rep' => $salesData['sales_rep'],
+            'address' => $salesData['address'],
+            'zipcode' => $salesData['zipcode'],
+            'phone' => $salesData['phone'],
+            'email' => $salesData['email'],
+            'loyalty_points' => $salesData['loyalty_points'],
+            'customer_id' => $salesData['customer_id'],
+            'country_id' => $salesData['country_id']
+        ]);
     }
 
-    public function updateSales($id, $data) {
+    public function updateSales($orderId, $salesData) {
         $stmt = $this->pdo->prepare("
             UPDATE sales SET 
             product_name = :product_name, 
@@ -59,11 +83,36 @@ class Sales {
             WHERE order_id = :id
         ");
 
-        $stmt->execute(array_merge(['id' => $id], $data));
+        $stmt->execute([
+            'id' => $orderId,
+            'product_name' => $salesData['product_name'],
+            'product_description' => $salesData['product_description'],
+            'gross_product_price' => $salesData['gross_product_price'],
+            'tax_per_product' => $salesData['tax_per_product'],
+            'quantity_purchased' => $salesData['quantity_purchased'],
+            'gross_revenue' => $salesData['gross_revenue'],
+            'total_tax' => $salesData['total_tax'],
+            'net_revenue' => $salesData['net_revenue'],
+            'product_category' => $salesData['product_category'],
+            'sku_number' => $salesData['sku_number'],
+            'weight' => $salesData['weight'],
+            'color' => $salesData['color'],
+            'size' => $salesData['size'],
+            'rating' => $salesData['rating'],
+            'stock' => $salesData['stock'],
+            'sales_rep' => $salesData['sales_rep'],
+            'address' => $salesData['address'],
+            'zipcode' => $salesData['zipcode'],
+            'phone' => $salesData['phone'],
+            'email' => $salesData['email'],
+            'loyalty_points' => $salesData['loyalty_points'],
+            'customer_id' => $salesData['customer_id'],
+            'country_id' => $salesData['country_id']
+        ]);
     }
 
-    public function deleteSales($id) {
+    public function deleteSales($orderId) {
         $stmt = $this->pdo->prepare("DELETE FROM sales WHERE order_id = :id");
-        $stmt->execute(['id' => $id]);
+        $stmt->execute(['id' => $orderId]);
     }
 }
